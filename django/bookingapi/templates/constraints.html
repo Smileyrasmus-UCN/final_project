@@ -1,0 +1,18 @@
+<!-- constraints.html -->
+
+<form action="{% url 'constraints_view' %}" method="POST">
+    {% csrf_token %}
+
+    <!-- Dropdown menu to select the constraint to edit -->
+    <select name="constraint_id">
+        <option value="">Create a new constraint</option>
+        {% for constraint in constraints %}
+            <option value="{{ constraint.id }}">{{ constraint.name }}</option>
+        {% endfor %}
+    </select>
+
+    <!-- Form fields for the Constraints model -->
+    {{ form.as_p }}
+
+    <button type="submit">Save changes</button>
+</form>

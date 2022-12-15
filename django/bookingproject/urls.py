@@ -25,4 +25,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     path("api-token-auth/", token_views.obtain_auth_token),
+    path("constraints/", bookingapi_views.constraints_view, name="constraints_view"),
 ]

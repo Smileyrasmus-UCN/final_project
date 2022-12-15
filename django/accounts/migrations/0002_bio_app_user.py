@@ -14,7 +14,7 @@ def create_bio_app_user(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("accounts", "0002_alter_customuser_id"),
+        ("accounts", "0001_initial"),
         ("authtoken", "0003_tokenproxy"),
     ]
 

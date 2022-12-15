@@ -7,6 +7,9 @@ from rest_framework.response import Response
 from django.db import transaction
 from rest_framework.decorators import action
 from django.db.transaction import get_connection
+from django.shortcuts import render
+from .models import Constraints
+from .forms import ConstraintsForm
 
 
 class BaseReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
@@ -166,3 +169,38 @@ class OrderViewSet(BaseViewSet):
     #         booking_serializer.is_valid(raise_exception=True)
     #         booking_serializer.save()
     #     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+def constraints_view(request):
+    # Check if the form has been submitted
+    if request.method == "POST":
+        # Check if the user wants to create a new constraint or edit an existing one
+        if "constraint_name" in request.POST:
+            # The user wants to edit an existing constraint
+            # Retrieve the Constraints object with the specified ID
+            constraint = Constraints.objects.get(name=request.POST["name"])
+        else:
+            if Constraints.objects.filter(name=request.POST["name"]).exists():
+                return request.POST["name"] + " already exists"
+            # The user wants to create a new constraint
+            # Create a new Constraints object
+            constraint = Constraints()
+
+        # Bind the form data to the form instance
+        form = ConstraintsForm(request.POST, instance=constraint)
+
+        # Check if the form data is valid
+        if form.is_valid():
+            # Save the form data to the Constraints model
+            form.save()
+
+    # Retrieve all Constraints objects
+    constraints = Constraints.objects.all()
+
+    # Create an instance of the ConstraintsForm
+    form = ConstraintsForm()
+
+    # Render the template with the form instance and the list of Constraints objects
+    return render(
+        request, "constraints.html", {"form": form, "constraints": constraints}
+    )

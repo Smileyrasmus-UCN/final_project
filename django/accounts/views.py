@@ -25,39 +25,39 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
 
-    @action(detail=False, methods=["get", "post"], url_path="account-form")
-    def account_form(self, request):
-        if request.method == "GET":
-            return render(
-                request,
-                "account_form.html",
-                {"user": request.user, "conditions": request.user.conditions},
-            )
-        if request.method == "POST":
-            for item in request.POST:
-                if item == "csrfmiddlewaretoken":
-                    continue
-                if request.POST[item] == "true":
-                    bool = True
-                if request.POST[item] == "false":
-                    bool = False
-                for key, value in request.user.conditions.items():
-                    if item in value:
-                        request.user.conditions[key][item] = bool
-                        request.user.save()
-
-            return Response(
-                {
-                    "message": "Success!",
-                    "usercond": request.user.conditions,
-                }
-            )
-
     # auto create token on user creation
     @receiver(post_save, sender=settings.AUTH_USER_MODEL)
     def create_auth_token(sender, instance=None, created=False, **kwargs):
         if created:
             Token.objects.create(user=instance)
+
+    # @action(detail=False, methods=["get", "post"], url_path="account-form")
+    # def account_form(self, request):
+    #     if request.method == "GET":
+    #         return render(
+    #             request,
+    #             "account_form.html",
+    #             {"user": request.user, "conditions": request.user.conditions},
+    #         )
+    #     if request.method == "POST":
+    #         for item in request.POST:
+    #             if item == "csrfmiddlewaretoken":
+    #                 continue
+    #             if request.POST[item] == "true":
+    #                 bool = True
+    #             if request.POST[item] == "false":
+    #                 bool = False
+    #             for key, value in request.user.conditions.items():
+    #                 if item in value:
+    #                     request.user.conditions[key][item] = bool
+    #                     request.user.save()
+
+    #         return Response(
+    #             {
+    #                 "message": "Success!",
+    #                 "usercond": request.user.conditions,
+    #             }
+    #         )
 
 
 class GroupViewSet(viewsets.ModelViewSet):
